@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code');
+@import url('https://fonts.googleapis.com/css2?family=Arvo');
+@import url('https://fonts.googleapis.com/css2?family=Raleway');
+
+@import 'tailwindcss';
+
+@theme {
+  --font-serif: 'Arvo', serif;
+  --font-sans: 'Raleway', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --color-radio-red: #ff0000;
+  --color-royse-red: #a52a2a;
+  --color-royse-red-light: #d9534f;
+  --color-programer-peach: #ce9a5f;
+  --color-dorkness-rising: #1a1921;
+  --color-not-white: #fafafa;
+}
