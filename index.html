@@ -8,5 +8,60 @@
     <link rel="stylesheet" href="/src/style.css" />
     <script src="/src/main.ts" type="module" defer></script>
   </head>
-  <body class="bg-dorkness-rising text-not-white" />
+  <body class="bg-dorkness-rising text-not-white text-xl">
+    <header
+      class="flex flex-col w-full items-center justify-center p-8 bg-royse-red border-b-2 border-b-programer-peach"
+    >
+      <h1 class="w-full text-5xl text-center uppercase tracking-widest font-serif font-extrabold text-programer-peach">
+        Embeddinator
+      </h1>
+      <p class="w-1/2 pt-4 text-xl text-center font-extrabold">
+        Create AI image embeddings using Huggingface models right in your browser. Download them as JSON, Base64-encoded
+        strings, or hex.
+      </p>
+    </header>
+
+    <main class="flex flex-row flex-wrap justify-center items-stretch p-16">
+      <form class="flex flex-col justify-start w-1/2 p-8" id="embedding-form">
+        <p class="w-full mt-4">Select a model:</p>
+        <select class="w-full bg-not-white text-dorkness-rising rounded-md p-2" id="image-model" required>
+          <option selected value="Xenova/clip-vit-base-patch16">Xenova/clip-vit-base-patch16</option>
+          <option value="Xenova/clip-vit-base-patch32">Xenova/clip-vit-base-patch32</option>
+        </select>
+
+        <p class="w-full mt-4">Upload an image to generate an embedding.</p>
+        <input
+          class="file:bg-programer-peach file:text-not-white file:rounded-lg file:py-2 file:px-4 file:mr-2 file:text-sm hover:file:bg-royse-red w-full hover:file:cursor-pointer bg-not-white text-dorkness-rising rounded-md p-2"
+          type="file"
+          id="image-input"
+          accept="image/*"
+          required
+        />
+
+        <p class="w-full mt-4" for="text-embedding-format">Select output format:</p>
+        <select class="w-full bg-not-white text-dorkness-rising rounded-md p-2" id="embedding-format" required>
+          <option selected value="base64">Base64</option>
+          <option value="hex">Hex</option>
+          <option value="json">JSON</option>
+        </select>
+
+        <button
+          class="w-full mt-8 p-4 rounded-md bg-programer-peach hover:bg-royse-red hover:cursor-pointer"
+          id="generate-button"
+          type="submit"
+        >
+          Generate Embedding
+        </button>
+      </form>
+
+      <section class="flex flex-col justify-start w-1/2 p-8">
+        <p class="w-full mt-4">Generated Embedding:</p>
+        <textarea
+          id="embedding-output"
+          class="w-full h-96 bg-not-white text-dorkness-rising rounded-md p-2"
+          readonly
+        ></textarea>
+      </section>
+    </main>
+  </body>
 </html>
