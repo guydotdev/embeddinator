@@ -24,9 +24,13 @@ async function generate() {
   disableForm()
 
   const imageUrl = await downloadImage()
-  const embedding = await generateEmbedding(imageUrl)
-  const result = formatEmbedding(embedding)
-  embeddingOutputArea.value = result
+  try {
+    const embedding = await generateEmbedding(imageUrl)
+    const result = formatEmbedding(embedding)
+    embeddingOutputArea.value = result
+  } finally {
+    URL.revokeObjectURL(imageUrl)
+  }
 
   enableForm()
 }
@@ -71,6 +75,9 @@ function formatEmbedding(embedding: Float32Array) {
       return formatAsHex(embedding)
     case 'json':
       return formatAsJson(embedding)
+    case 'raw':
+      downloadRawBytes(embedding)
+      return ''
     default:
       throw new Error(`Unsupported format: ${format}`)
   }
@@ -95,6 +102,31 @@ function formatAsJson(embedding: Float32Array): string {
   return JSON.stringify(Array.from(embedding))
 }
 
+function downloadRawBytes(embedding: Float32Array) {
+  const bytes = formatAsRawBytes(embedding)
+  const blob = new Blob([bytes], { type: 'application/octet-stream' })
+  const url = URL.createObjectURL(blob)
+  const filename = generateFilename()
+
+  triggerDownload(url, filename)
+
+  URL.revokeObjectURL(url)
+}
+
 function formatAsRawBytes(embedding: Float32Array): Uint8Array {
   return new Uint8Array(embedding.buffer)
+}
+
+function triggerDownload(url: string, filename: string) {
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+}
+
+function generateFilename() {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+  return `embedding-${timestamp}.bin`
 }
