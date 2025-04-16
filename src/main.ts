@@ -3,22 +3,42 @@ import { pipeline } from '@huggingface/transformers'
 const modelSelector = document.querySelector('#image-model') as HTMLSelectElement
 const imageSelector = document.querySelector('#image-input') as HTMLInputElement
 const formatSelector = document.querySelector('#embedding-format') as HTMLSelectElement
+const generateButton = document.querySelector('#generate-button') as HTMLButtonElement
 const embeddingForm = document.querySelector('#embedding-form') as HTMLFormElement
 const embeddingOutputArea = document.querySelector('#embedding-output') as HTMLTextAreaElement
+const overlayElement = document.querySelector('#wait-overlay') as HTMLDivElement
 
-embeddingForm.addEventListener('submit', onGenerateButtonClicked)
+embeddingForm.addEventListener('submit', onGenerateFormSubmitted)
 
-async function onGenerateButtonClicked(event: Event) {
+async function onGenerateFormSubmitted(event: Event) {
   event.preventDefault()
 
   if (embeddingForm.checkValidity()) {
-    const imageUrl = await downloadImage()
-    const embedding = await generateEmbedding(imageUrl)
-    const result = formatEmbedding(embedding)
-    embeddingOutputArea.value = result
+    await generate()
   } else {
     embeddingForm.reportValidity()
   }
+}
+
+async function generate() {
+  disableForm()
+
+  const imageUrl = await downloadImage()
+  const embedding = await generateEmbedding(imageUrl)
+  const result = formatEmbedding(embedding)
+  embeddingOutputArea.value = result
+
+  enableForm()
+}
+
+function disableForm() {
+  generateButton.disabled = true
+  overlayElement.classList.remove('hidden')
+}
+
+function enableForm() {
+  generateButton.disabled = false
+  overlayElement.classList.add('hidden')
 }
 
 async function downloadImage(): Promise<string> {
