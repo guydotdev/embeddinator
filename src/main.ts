@@ -75,6 +75,9 @@ function formatEmbedding(embedding: Float32Array) {
       return formatAsHex(embedding)
     case 'json':
       return formatAsJson(embedding)
+    case 'json-download':
+      downloadJson(embedding)
+      return ''
     case 'raw':
       downloadRawBytes(embedding)
       return ''
@@ -102,11 +105,20 @@ function formatAsJson(embedding: Float32Array): string {
   return JSON.stringify(Array.from(embedding))
 }
 
+function downloadJson(embedding: Float32Array) {
+  const json = formatAsJson(embedding)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const filename = generateFilename('json')
+  triggerDownload(url, filename)
+  URL.revokeObjectURL(url)
+}
+
 function downloadRawBytes(embedding: Float32Array) {
   const bytes = formatAsRawBytes(embedding)
   const blob = new Blob([bytes], { type: 'application/octet-stream' })
   const url = URL.createObjectURL(blob)
-  const filename = generateFilename()
+  const filename = generateFilename('bin')
 
   triggerDownload(url, filename)
 
@@ -126,7 +138,7 @@ function triggerDownload(url: string, filename: string) {
   document.body.removeChild(a)
 }
 
-function generateFilename() {
+function generateFilename(extension: 'json' | 'bin'): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-  return `embedding-${timestamp}.bin`
+  return `embedding-${timestamp}.${extension}`
 }
